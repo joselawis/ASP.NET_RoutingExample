@@ -14,13 +14,13 @@ app.UseEndpoints(endpoints =>
         await context.Response.WriteAsync($"In files - {fileName}.{extension}");
     });
 
-    endpoints.Map("employee/profile/{employeeName=Jose}", async (context) =>
+    endpoints.Map("employee/profile/{employeeName:alpha:length(3,7)=Jose}", async (context) =>
     {
-        int? employeeName = Convert.ToInt32(context.Request.RouteValues["employeeName"]);
+        int employeeName = Convert.ToInt32(context.Request.RouteValues["employeeName"]);
         await context.Response.WriteAsync($"In employee profile - {employeeName}");
     });
 
-    endpoints.Map("products/details/{id:int?}", async (context) =>
+    endpoints.Map("products/details/{id:int:range(1,1000)?}", async (context) =>
     {
         if (context.Request.RouteValues.ContainsKey("id"))
         {
@@ -39,16 +39,30 @@ app.UseEndpoints(endpoints =>
         await context.Response.WriteAsync($"In daily-digest-report - {date}");
     });
 
-    endpoints.Map("cities/{cityId:guid", async (context) =>
+    endpoints.Map("cities/{cityId:guid}", async (context) =>
     {
         Guid cityId = Guid.Parse(Convert.ToString(context.Request.RouteValues["cityId"])!);
         await context.Response.WriteAsync($"In city information - {cityId}");
+    });
+
+    endpoints.Map("sales-report/{year:int:min(1900)}/{month:regex(^(apr|jul|oct|jan)}", async (context) =>
+    {
+        int year = Convert.ToInt32(context.Request.RouteValues["year"]);
+        string? month = Convert.ToString(context.Request.RouteValues["month"]);
+        if (month == "apr" || month == "jul" || month == "oct" || month == "jan")
+        {
+            await context.Response.WriteAsync($"In sales report - {year} - {month}");
+        }
+        else
+        {
+            await context.Response.WriteAsync($"{month} is not allowed for sales report");
+        }
     });
 });
 
 app.Run(async (context) =>
 {
-    await context.Response.WriteAsync($"Request received at {context.Request.Path}");
+    await context.Response.WriteAsync($"No route matched at {context.Request.Path}");
 });
 
 app.Run();
