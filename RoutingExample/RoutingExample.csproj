@@ -7,4 +7,14 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
+  <ItemGroup>
+    <None Remove="CustomConstraints\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CustomConstraints\" />
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\" />
+  </ItemGroup>
 </Project>

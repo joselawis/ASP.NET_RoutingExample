@@ -1,4 +1,10 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using RoutingExample.CustomConstraints;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddRouting(options =>
+{
+    options.ConstraintMap.Add("months", typeof(MonthsCustomConstraint));
+});
 var app = builder.Build();
 
 // enable Routing
@@ -45,7 +51,7 @@ app.UseEndpoints(endpoints =>
         await context.Response.WriteAsync($"In city information - {cityId}");
     });
 
-    endpoints.Map("sales-report/{year:int:min(1900)}/{month:regex(^(apr|jul|oct|jan)}", async (context) =>
+    endpoints.Map("sales-report/{year:int:min(1900)}/{month:months}", async (context) =>
     {
         int year = Convert.ToInt32(context.Request.RouteValues["year"]);
         string? month = Convert.ToString(context.Request.RouteValues["month"]);
@@ -57,6 +63,11 @@ app.UseEndpoints(endpoints =>
         {
             await context.Response.WriteAsync($"{month} is not allowed for sales report");
         }
+    });
+
+    endpoints.Map("sales-report/2024/jan", async (context) =>
+    {
+        await context.Response.WriteAsync("Sales report exclusively for 2024 Jan");
     });
 });
 
