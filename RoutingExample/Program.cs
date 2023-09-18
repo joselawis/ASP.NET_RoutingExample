@@ -1,11 +1,18 @@
-﻿using RoutingExample.CustomConstraints;
+﻿using Microsoft.Extensions.FileProviders;
+using RoutingExample.CustomConstraints;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions() { WebRootPath = "myRoot" });
 builder.Services.AddRouting(options =>
 {
     options.ConstraintMap.Add("months", typeof(MonthsCustomConstraint));
 });
 var app = builder.Build();
+
+app.UseStaticFiles(); // works with the web root path (myRoot)
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "myWebRoot"))
+}); // works with "myWebRoot"
 
 // enable Routing
 app.UseRouting();
@@ -69,6 +76,7 @@ app.UseEndpoints(endpoints =>
     {
         await context.Response.WriteAsync("Sales report exclusively for 2024 Jan");
     });
+
 });
 
 app.Run(async (context) =>

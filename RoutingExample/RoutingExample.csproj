@@ -9,9 +9,13 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
     <None Remove="CustomConstraints\" />
+    <None Remove="myRoot\" />
+    <None Remove="myWebRoot\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="CustomConstraints\" />
+    <Folder Include="myRoot\" />
+    <Folder Include="myWebRoot\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
